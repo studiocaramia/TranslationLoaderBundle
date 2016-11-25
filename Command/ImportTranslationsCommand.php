@@ -108,6 +108,8 @@ class ImportTranslationsCommand extends BaseTranslationCommand
         $translationWriter = $this->getTranslationWriter();
         $supportedFormats  = $translationWriter->getFormats();
 
+        $handledRessources = $this->getContainer()->getParameter('asm_translation_loader.resources');
+
         // iterate all bundles and get their translations
         foreach (array_keys($this->getContainer()->getParameter('kernel.bundles')) as $bundle) {
             $currentBundle   = $this->getKernel()->getBundle($bundle);
@@ -134,6 +136,14 @@ class ImportTranslationsCommand extends BaseTranslationCommand
                         if (in_array($fileExtension, $supportedFormats)) {
                             $locale = array_pop($extension);
                             $domain = array_pop($extension);
+
+                            if (!isset($handledRessources[$locale]) || !in_array($domain, $handledRessources[$locale])) {
+                                $output->writeln(
+                                    '<comment>skipping ' . $file->getFilename(
+                                    ) . ' with locale ' . $locale . ' and domain ' . $domain . '</comment>'
+                                );
+                                continue;
+                            }
 
                             if (empty($this->catalogues[$locale])) {
                                 $this->catalogues[$locale] = new MessageCatalogue($locale);
