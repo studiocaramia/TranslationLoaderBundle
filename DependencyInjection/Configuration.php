@@ -139,6 +139,20 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('translation_history_class')
                     ->defaultValue('Asm\TranslationLoaderBundle\Entity\TranslationHistory')
                 ->end()
+                ->arrayNode('domains_heritance')
+                    ->useAttributeAsKey('parent')
+                    ->prototype('array')
+                    ->beforeNormalization()
+                        ->ifNull()
+                            ->then(
+                                function () {
+                                    return array();
+                                }
+                            )
+                    ->end()
+                    ->useAttributeAsKey('extension')
+                    ->prototype('scalar')->end()
+                ->end()
             ->end();
 
         return $treeBuilder;

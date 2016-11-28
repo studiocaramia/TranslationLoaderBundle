@@ -34,14 +34,21 @@ abstract class TranslationManager implements TranslationManagerInterface
     protected $eventDispatcher;
 
     /**
+     * @var array
+     */
+    protected $domainHeritances = array();
+
+    /**
      * @param string $class Class name of managed {@link TranslationInterface} objects
      * @param EventDispatcherInterface $eventDispatcher Event dispatcher used to propagate new, modified
      *                                                  and removed translations
+     * @param Array $domainHeritances Witch domains must be overitten
      */
-    public function __construct($class, EventDispatcherInterface $eventDispatcher)
+    public function __construct($class, EventDispatcherInterface $eventDispatcher, $domainHeritances)
     {
-        $this->class           = $class;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->class            = $class;
+        $this->eventDispatcher  = $eventDispatcher;
+        $this->domainHeritances = $domainHeritances;
     }
 
     /**
@@ -69,9 +76,63 @@ abstract class TranslationManager implements TranslationManagerInterface
      */
     public function findTranslationsByLocaleAndDomain($locale, $domain = 'messages')
     {
-        return $this->findTranslationsBy(array(
+        // Domain without heritance
+        if (false == ($parentDomain = $this->getParentDomain($domain))) {
+            return $this->findTranslationsBy(array(
+                'transLocale'   => $locale,
+                'messageDomain' => $domain,
+            ));
+        }
+
+        // Domain with heritance
+        $parentTranslations = $this->findTranslationsBy(array(
+            'transLocale'   => $locale,
+            'messageDomain' => $parentDomain,
+        ));
+
+        $childTranslations = $this->findTranslationsBy(array(
             'transLocale'   => $locale,
             'messageDomain' => $domain,
         ));
+
+        return $this->mergeTranslationsDomains($parentTranslations, $childTranslations);
+    }
+
+    /**
+     * [getParentDomain description]
+     * @param  [type] $domain [description]
+     * @return [type]         [description]
+     */
+    protected function getParentDomain($domain)
+    {
+        foreach($this->domainHeritances as $parent => $childs) {
+            if (in_array($domain, $childs)) {
+                return $parent;
+            }
+        }
+
+        return false;
+    }
+
+    protected function mergeTranslationsDomains($parentTranslations, $childTranslations)
+    {
+        $result = [];
+
+        // Index by transKey
+        foreach($parentTranslations as $pTrans) {
+            $result[$pTrans->getTransKey()] = $pTrans;
+        }
+
+        // Erase existings with child values
+        foreach($childTranslations as $cTrans) {
+            $result[$cTrans->getTransKey()] = $cTrans;
+        }
+
+        // Free memory
+        unset($parentTranslations);
+        unset($childTranslations);
+
+        // Drop indexes
+        return array_values($result);
     }
 }

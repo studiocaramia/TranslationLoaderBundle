@@ -8,6 +8,7 @@
         <service id="asm_translation_loader.translation_manager" class="%asm_translation_loader.translation_manager.class%">
             <argument type="service" id="asm_translation_loader.translation.entity_manager" />
             <argument>%asm_translation_loader.model.translation.class%</argument>
+            <argument>%asm_translation_loader.domains_heritance%</argument>
             <argument type="service" id="asm_translation_loader.event_dispatcher" />
         </service>
 

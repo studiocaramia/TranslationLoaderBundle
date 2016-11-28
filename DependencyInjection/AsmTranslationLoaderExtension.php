@@ -89,6 +89,8 @@ class AsmTranslationLoaderExtension extends Extension
             }
         }
 
+        $container->setParameter('asm_translation_loader.domains_heritance', $config['domains_heritance']);
+
         // load the loader resolver service
         $loader->load('file_loader_resolver.xml');
     }

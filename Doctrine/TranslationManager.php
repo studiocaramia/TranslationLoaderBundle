@@ -41,9 +41,9 @@ class TranslationManager extends BaseTranslationManager
      * @param EventDispatcherInterface $eventDispatcher Event dispatcher used to propagate new, modified
      *                                                  and removed translations
      */
-    public function __construct(ObjectManager $objectManager, $class, EventDispatcherInterface $eventDispatcher)
+    public function __construct(ObjectManager $objectManager, $class, $domainHeritances, EventDispatcherInterface $eventDispatcher)
     {
-        parent::__construct($class, $eventDispatcher);
+        parent::__construct($class, $eventDispatcher, $domainHeritances);
 
         $this->objectManager = $objectManager;
         $this->repository    = $objectManager->getRepository($class);
