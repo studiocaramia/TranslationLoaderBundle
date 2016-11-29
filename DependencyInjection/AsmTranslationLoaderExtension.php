@@ -34,6 +34,13 @@ class AsmTranslationLoaderExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
+        // Check if SonataAdminBundle is enabled
+        $container->setParameter('asm_translation_loader.sonata_admin.label', $config['sonata_admin']['label']);
+        $container->setParameter('asm_translation_loader.sonata_admin.group', $config['sonata_admin']['group']);
+        if ($config['sonata_admin']['enabled']) {
+            $loader->load('services_admin.yml');
+        }
+
         // set entity manager for translations
         $em = 'default';
         if (isset($config['database']['entity_manager'])

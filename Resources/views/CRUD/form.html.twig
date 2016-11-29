@@ -1,0 +1,16 @@
+
+{% set newObject = object.get(field) == null %}
+<form action="{{ newObject ? admin.generateUrl('createTranslation') : admin.generateUrl('updateTranslation') }}" method="POST" name="asm_translation">
+    <textarea name="asm_translation[translation]">{{ object.get(field) }}</textarea>
+    <input type="hidden" name="asm_translation[transKey]" value="{{ object.transKey }}"/>
+    <input type="hidden" name="asm_translation[transLocale]" value="{{ object.transLocale }}"/>
+    <input type="hidden" name="asm_translation[messageDomain]" value="{{ field }}"/>
+
+    {% if newObject == false %}
+        <a href="{{ admin.generateUrl('deleteTranslation', {'key': object.transKey, 'locale': object.transLocale, 'domain': field }) }}">DELETE</a>
+        <input type="submit" name="asm_translation[save]" value="EDIT"/>
+    {% else %}
+        <input type="submit" name="asm_translation[save]" value="CREATE"/>
+    {% endif %}
+</form>
+

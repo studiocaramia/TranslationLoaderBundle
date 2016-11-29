@@ -75,4 +75,29 @@ class TranslationRepository extends EntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function getTranslationListIndexed($locale)
+    {
+        $qb = $this->createQueryBuilder('t');
+
+        $alias = $qb->getRootAlias();
+        $translation = '\Asm\TranslationLoaderBundle\Entity\Translation';
+        $qb
+            ->select(
+                "NEW \Asm\TranslationLoaderBundle\DTO\TranslationAdmin(
+                    $alias.transKey,
+                    $alias.transLocale,
+                    $alias.messageDomain,
+                    $alias.translation
+                )"
+            )
+            ->andWhere("$alias.transLocale = :locale")
+            ->setParameter('locale', $locale)
+            ->addOrderBy("$alias.transKey", 'ASC')
+        ;
+
+        $qb->getQuery()->getResult();
+
+        return \Asm\TranslationLoaderBundle\DTO\TranslationAdmin::getTranslationListIndexed($locale);
+    }
 }

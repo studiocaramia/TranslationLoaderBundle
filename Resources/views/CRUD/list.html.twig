@@ -1,0 +1,62 @@
+
+{% extends 'SonataAdminBundle:CRUD:base_list.html.twig' %}
+
+{% block actions %}
+{% spaceless %}
+    {% if admin.hasRoute('create') and admin.isGranted('CREATE')%}
+        <li>{% include 'SonataAdminBundle:Core:create_button.html.twig' %}</li>
+    {% endif %}
+{% endspaceless %}
+{% endblock %}
+
+{% block list_filters %}
+    <div class="box box-primary">
+        <div class="box-header">
+            <h4 class="box-title filter_legend active">{{ 'label_filters'|trans({}, 'SonataAdminBundle') }}</h4>
+        </div>
+
+        <div class="box-body">
+            <form class="sonata-filter-form" action="{{ admin.generateUrl('list') }}" method="GET" role="form">
+                {{ form_errors(form) }}
+                    <div class="filter_container">
+                        
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-filter"></i> {{ 'btn_filter'|trans({}, 'SonataAdminBundle') }}</button>
+
+                        <a class="btn btn-default" href="{{ admin.generateUrl('list', {filters: 'reset'}) }}">{{ 'link_reset_filter'|trans({}, 'SonataAdminBundle') }}</a>
+                    </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block list_table %}
+    <div class="box box-primary">
+        <div class="box-body table-responsive no-padding">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr class="sonata-ba-list-field-header">
+                        {% for field in fields %}
+                        <th class="">
+                            {{ field }}
+                        </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for object in list %}
+                        <tr>
+                            {% for field in fields %}
+                                {% if field in domains %}
+                                <td>{% include 'AsmTranslationLoaderBundle:CRUD:form.html.twig' %}</td>
+                                {% else %}
+                                <td>{{ object.get(field) }}</td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

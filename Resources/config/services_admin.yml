@@ -1,0 +1,12 @@
+services:
+    # Sonata Admin part
+    asm_translation_loader.admin.translation:
+        class: Asm\TranslationLoaderBundle\Admin\TranslationAdmin
+        arguments: [~, "%asm_translation_loader.model.translation.class%", AsmTranslationLoaderBundle:TranslationAdmin]
+        tags:
+            - { name: sonata.admin, label: "%asm_translation_loader.sonata_admin.label%", group: "%asm_translation_loader.sonata_admin.group%", manager_type: orm, label_translator_strategy: sonata.admin.label.strategy.underscore, label_catalogue: Admin  }
+        calls:
+            - [setTranslationDomain, [Admin]]
+            - [setTranslationManager, ["@asm_translation_loader.translation_manager"]]
+            - [setTemplate, ["list", "AsmTranslationLoaderBundle:CRUD:list.html.twig"]]
+            # - [setTemplate, ["inner_list_row", "AsmTranslationLoaderBundle:CRUD:list.html.twig"]]
