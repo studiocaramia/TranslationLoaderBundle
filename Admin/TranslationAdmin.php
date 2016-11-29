@@ -61,23 +61,14 @@ class TranslationAdmin extends Admin
         return $this->getConfigurationPool()->getContainer()->get('doctrine.orm.entity_manager')->getRepository($this->getClass());
     }
 
-    // TODO move to repo
     protected function getAllMessageDomains()
     {
-        $qb = $this->getEntityRepository()->createQueryBuilder('t');
-        $results = $qb
-            ->select('DISTINCT(t.messageDomain)')
-            ->orderBy('t.messageDomain') // TODO: Opti to order by Parent > Child
-        ->getQuery()->getArrayResult();
-        return array_map('current', $results);
+        return $this->getConfigurationPool()->getContainer()->getParameter('asm_translation_loader.domains');
     }
 
-    // TODO move to repo
     protected function getAllTransLocales()
     {
-        $qb = $this->getEntityRepository()->createQueryBuilder('t');
-        $results = $qb->select('DISTINCT(t.transLocale)')->getQuery()->getArrayResult();
-        return array_map('current', $results);
+        return $this->getConfigurationPool()->getContainer()->getParameter('asm_translation_loader.locales');
     }
 
     public function findTranslationForKeyDomainLocale($key, $domain, $locale)

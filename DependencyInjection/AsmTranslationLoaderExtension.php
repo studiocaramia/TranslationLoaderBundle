@@ -98,6 +98,31 @@ class AsmTranslationLoaderExtension extends Extension
 
         $container->setParameter('asm_translation_loader.domains_heritance', $config['domains_heritance']);
 
+        // Helpers
+        $locales = [];
+        $domains = [];
+        foreach($config['resources'] as $locale => $messageDomains) {
+            $locales[] = $locale;
+            foreach($messageDomains as $domain) {
+                $domains[$domain] = $domain;
+            }
+        }
+
+        // Reorder domains to set parents first
+        foreach($config['domains_heritance'] as $parent => $childs) {
+            foreach ($childs as $domain) {
+                unset($domains[$domain]);
+                array_unshift($domains, $domain);
+            }
+            unset($domains[$parent]);
+            array_unshift($domains, $parent);
+        }
+
+        $domains = array_values($domains);
+
+        $container->setParameter('asm_translation_loader.locales', $locales);
+        $container->setParameter('asm_translation_loader.domains', $domains);
+
         // load the loader resolver service
         $loader->load('file_loader_resolver.xml');
     }

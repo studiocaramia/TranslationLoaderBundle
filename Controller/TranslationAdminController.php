@@ -32,22 +32,22 @@ class TranslationAdminController extends CRUDController
             'transLocale',
         ];
 
-        $domains = ['General', 'Front', 'Mobile'];
+        $domains = $this->container->getParameter('asm_translation_loader.domains');
 
         foreach($domains as $domain) {
             $fields[] = $domain;
         }
 
+        // TODO
         $form = $this->createForm('form');
-
 
         return $this->render($this->admin->getTemplate('list'), array(
             'admin'     => $this->admin,
-            'action'     => 'list',
-            'list'       => $tranlations,
-            'fields'        => $fields,
-            'domains'        => $domains,
-            'form'       => $form->createView(),
+            'action'    => 'list',
+            'list'      => $tranlations,
+            'fields'    => $fields,
+            'domains'   => $domains,
+            'form'      => $form->createView(),
             'csrf_token' => $this->getCsrfToken('sonata.batch'),
         ));
     }
