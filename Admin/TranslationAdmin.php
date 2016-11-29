@@ -44,29 +44,6 @@ class TranslationAdmin extends Admin
     {
         $query = parent::createQuery($context);
 
-        // $query->andWhere(
-        //     $query->expr()->like($query->getRootAliases()[0] . '.transKey', ':my_param')
-        // );
-        // $query->setParameter('my_param', '%iban%');
-        if ($context == 'list') {
-            // We cant use groupBy because of Sonata\DoctrineORMAdminBundle\Datagrid\Pager::computeNbResult, it does not remove groupBy parts and break
-            // $query->addGroupBy($query->getQueryBuilder()->getRootAlias() . '.transKey');
-
-            // $qb = $this->getEntityRepository()->createQueryBuilder('trans_index')
-            //     ->select('DISTINCT(trans_index.transKey)')
-            //     ->groupBy('trans_index.transKey')
-            // ;
-
-            // $query
-            //     ->andWhere(
-            //         $qb->expr()->in(
-            //             $query->getQueryBuilder()->getRootAlias() . '.transKey',
-            //             $qb->getQuery()->getDQL()
-            //         )
-            //     )
-            // ;
-        }
-
         $query->where(
             $query->getQueryBuilder()->getRootAlias() . ".transKey = :impossiblevalue"
         )->setParameter('impossiblevalue', -1);
@@ -116,8 +93,7 @@ class TranslationAdmin extends Admin
 
     protected function configureRoutes(RouteCollection $collection)
     {
-        $collection->remove('batch');
-        $collection->remove('show');
+        $collection->clearExcept(['list']);
         $collection->add('form', 'form');
         $collection->add('createTranslation', 'createTranslation');
         $collection->add('updateTranslation', 'updateTranslation');

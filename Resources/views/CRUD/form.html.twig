@@ -1,16 +1,45 @@
 
-{% set newObject = object.get(field) == null %}
-<form action="{{ newObject ? admin.generateUrl('createTranslation') : admin.generateUrl('updateTranslation') }}" method="POST" name="asm_translation">
-    <textarea name="asm_translation[translation]">{{ object.get(field) }}</textarea>
-    <input type="hidden" name="asm_translation[transKey]" value="{{ object.transKey }}"/>
-    <input type="hidden" name="asm_translation[transLocale]" value="{{ object.transLocale }}"/>
-    <input type="hidden" name="asm_translation[messageDomain]" value="{{ field }}"/>
+{% set newObject = object.get(field) is null %}
+{% set templateId = 'form_' ~ random() ~ random() %}
+
+<div class="admin-translation-form">
 
     {% if newObject == false %}
-        <a href="{{ admin.generateUrl('deleteTranslation', {'key': object.transKey, 'locale': object.transLocale, 'domain': field }) }}">DELETE</a>
-        <input type="submit" name="asm_translation[save]" value="EDIT"/>
+    <div class="hover-toggle pointer" data-toggle="modal" data-target="#{{ templateId }}">
+        <div class="translation-preview">{{ object.get(field)|truncate(70) }}</div>
+        <div class="hover-show">Editer</div>
+    </div>
     {% else %}
-        <input type="submit" name="asm_translation[save]" value="CREATE"/>
+        <div class="pointer">
+        <i class="fa fa-plus" data-toggle="modal" data-target="#{{ templateId }}"></i>
+        </div>
     {% endif %}
-</form>
 
+    <div class="modal fade" id="{{ templateId }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <form action="{{ newObject ? admin.generateUrl('createTranslation') : admin.generateUrl('updateTranslation') }}" method="POST">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">{{  newObject ? 'Ajouter une traduction' : 'Éditer une traduction'}}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <textarea name="asm_translation[translation]" class="form-control">{{ object.get(field) }}</textarea>
+                        <input type="hidden" name="asm_translation[transKey]" value="{{ object.transKey }}"/>
+                        <input type="hidden" name="asm_translation[transLocale]" value="{{ object.transLocale }}"/>
+                        <input type="hidden" name="asm_translation[messageDomain]" value="{{ field }}"/>
+                    </div>
+                    <div class="modal-footer">
+                        {% if newObject == false %}
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                            <a href="{{ admin.generateUrl('deleteTranslation', {'key': object.transKey, 'locale': object.transLocale, 'domain': field }) }}" class="btn btn-secondary"><i class="fa fa-times"></i></a>
+                        {% else %}
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i></button>
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

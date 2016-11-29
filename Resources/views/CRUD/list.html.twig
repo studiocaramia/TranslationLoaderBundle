@@ -1,6 +1,57 @@
 
 {% extends 'SonataAdminBundle:CRUD:base_list.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style type="text/css">
+        .translation-table td { vertical-align: middle !important; }
+        .translation-table td.domain { width: 20%; }
+
+        .pointer {
+            cursor: pointer;
+        }
+
+        .hover-toggle { 
+            position: relative;
+            padding-bottom: 1em;
+            overflow: hidden;
+        }
+        .hover-toggle .hover-show { 
+            position: absolute;
+            bottom: -2em;
+            height: 2em;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.8)
+        }
+        .hover-toggle:hover .hover-show { 
+            /*bottom: 0;*/
+        }
+
+        .hover-toggle:hover { 
+            text-decoration: underline;
+        }
+
+        .translation-preview {
+            display: block;
+            width: 100%;
+            max-height: 3em;
+            overflow: hidden;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+    $(function(){
+        $(".admin-translation-form").click(function(e){
+
+        });
+    })
+    </script>
+{% endblock %}
+
 {% block actions %}
 {% spaceless %}
     {% if admin.hasRoute('create') and admin.isGranted('CREATE')%}
@@ -32,7 +83,7 @@
 {% block list_table %}
     <div class="box box-primary">
         <div class="box-body table-responsive no-padding">
-            <table class="table table-bordered table-striped">
+            <table class="table table-bordered table-hover translation-table">
                 <thead>
                     <tr class="sonata-ba-list-field-header">
                         {% for field in fields %}
@@ -47,7 +98,7 @@
                         <tr>
                             {% for field in fields %}
                                 {% if field in domains %}
-                                <td>{% include 'AsmTranslationLoaderBundle:CRUD:form.html.twig' %}</td>
+                                <td class="domain">{% include 'AsmTranslationLoaderBundle:CRUD:form.html.twig' %}</td>
                                 {% else %}
                                 <td>{{ object.get(field) }}</td>
                                 {% endif %}
@@ -58,5 +109,4 @@
             </table>
         </div>
     </div>
-
 {% endblock %}
