@@ -49,7 +49,7 @@ class ImportTranslationsCommand extends BaseTranslationCommand
     {
         $this
             ->setName('asm:translations:import')
-            ->setDescription('Import translations from all bundles')
+            ->setDescription('import translations selected in ressources config section from files to db')
             ->addOption(
                 'clear',
                 'c',

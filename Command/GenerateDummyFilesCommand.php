@@ -26,7 +26,7 @@ class GenerateDummyFilesCommand extends BaseTranslationCommand
     {
         $this
             ->setName('asm:translations:dummy')
-            ->setDescription('generate dummy files for translation loader');
+            ->setDescription('generate dummy files to trigger the translator doing db translations');
     }
 
 
