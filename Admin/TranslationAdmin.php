@@ -35,6 +35,12 @@ class TranslationAdmin extends Admin
 
     );
 
+    public function configure()
+    {
+        $this->datagridValues['transLocale'] = ['type' => "1", 'value' => 'fr'];
+        parent::configure();
+    }
+
     public function setTranslationManager(TranslationManagerInterface $translationManager)
     {
         $this->translationManager = $translationManager;
@@ -93,7 +99,6 @@ class TranslationAdmin extends Admin
 
     public function getInlineForm($translation)
     {
-
         $options = [
             'action' => $this->generateObjectUrl('edit', $translation)
         ];
@@ -107,17 +112,18 @@ class TranslationAdmin extends Admin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('transKey')
-            ->add('translation')
-            ->add('transLocale', null, [], ChoiceType::class, [
-                'choices' => array_flip($this->getAllTransLocales()),
-                'choice_label' => function ($value, $key, $index) {
-                    return $value;
-                }
+            // ->add('transKey')
+            // ->add('translation')
+            ->add('transLocale', 'doctrine_orm_choice', [], ChoiceType::class, [
+                'mapped' => false,
+                'choices' => $this->getAllTransLocales(),
+                // 'choice_label' => function ($value, $key, $index) {
+                //     return $value;
+                // }
             ])
-            ->add('messageDomain', null, [], ChoiceType::class, [
-                'choices' => $this->getAllMessageDomains(),
-            ])
+            // ->add('messageDomain', null, [], ChoiceType::class, [
+            //     'choices' => $this->getAllMessageDomains(),
+            // ])
         ;
     }
 

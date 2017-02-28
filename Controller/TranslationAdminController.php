@@ -25,12 +25,18 @@ class TranslationAdminController extends CRUDController
             throw new AccessDeniedException();
         }
 
-        $tranlations = $this->getDoctrine()->getRepository(Translation::class)->getTranslationListIndexed('fr');
+        $datagrid = $this->admin->getDataGrid();
+        $request = $this->admin->getRequest();
+
+        $locale = $request->get('locale', $this->getParameter('locale'));
+
+        $tranlations = $this->getDoctrine()->getRepository(Translation::class)->getTranslationListIndexed($locale);
 
         $fields = [
             'transKey',
             'transLocale',
         ];
+
 
         $domains = $this->container->getParameter('asm_translation_loader.domains');
 
@@ -38,8 +44,8 @@ class TranslationAdminController extends CRUDController
             $fields[] = $domain;
         }
 
-        // TODO
-        $form = $this->createForm('form');
+        $formView = $datagrid->getForm()->createView();
+        $this->get('twig')->getExtension('form')->renderer->setTheme($formView, $this->admin->getFilterTheme());
 
         return $this->render($this->admin->getTemplate('list'), array(
             'admin'     => $this->admin,
@@ -47,7 +53,7 @@ class TranslationAdminController extends CRUDController
             'list'      => $tranlations,
             'fields'    => $fields,
             'domains'   => $domains,
-            'form'      => $form->createView(),
+            'form'      => $formView,
             'csrf_token' => $this->getCsrfToken('sonata.batch'),
         ));
     }
@@ -151,6 +157,8 @@ class TranslationAdminController extends CRUDController
 
                 $manager->updateTranslation($translation);
 
+                $this->eraseTranslationCache();
+
                 $this->addFlash('sonata_flash_success', 'Traduction éditée');
             } else {
                 $translation = $form->getData();
@@ -173,5 +181,11 @@ class TranslationAdminController extends CRUDController
             return $this->redirect($this->admin->generateUrl('list'));
 
         return $response;
+    }
+
+    protected function eraseTranslationCache()
+    {
+        $dir = $this->get('kernel')->getCacheDir() . '/translations';
+        array_map('unlink', glob("$dir/*.*"));
     }
 }

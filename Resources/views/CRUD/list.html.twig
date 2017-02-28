@@ -68,9 +68,22 @@
 
         <div class="box-body">
             <form class="sonata-filter-form" action="{{ admin.generateUrl('list') }}" method="GET" role="form">
-                {{ form_errors(form) }}
                     <div class="filter_container">
-                        
+
+                        <!-- WHY SONATA FILTERS DOES NOT FK WORK ????? -->
+                        <div class="form-group">
+                            <label for="filter_label_value">Langue</label>
+                                <div>
+                                </div>
+                                <div>
+                                    <select name="locale">
+                                        <option value="en">En</option>
+                                        <option value="fr">Fr</option>
+                                        <option value="es">Es</option>
+                                    </select>
+                                </div>
+                        </div>
+
                         <button type="submit" class="btn btn-primary"><i class="fa fa-filter"></i> {{ 'btn_filter'|trans({}, 'SonataAdminBundle') }}</button>
 
                         <a class="btn btn-default" href="{{ admin.generateUrl('list', {filters: 'reset'}) }}">{{ 'link_reset_filter'|trans({}, 'SonataAdminBundle') }}</a>
@@ -88,7 +101,7 @@
                     <tr class="sonata-ba-list-field-header">
                         {% for field in fields %}
                         <th class="">
-                            {{ field }}
+                            {{ admin.trans(field) }}
                         </th>
                         {% endfor %}
                     </tr>
